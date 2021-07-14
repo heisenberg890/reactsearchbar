@@ -1,11 +1,12 @@
 import React, { Component, useState, useEffect } from "react";
 import { render } from "react-dom";
+import "./App.css";
+import Button from "react-bootstrap/Button";
 
 function SearchBar() {
-  const [make, setMake] = useState("ASTON MARTIN");
-  const [type, setType] = useState("Passenger Car");
-  const [year, setYear] = useState(1900);
-
+  const [make, setMake] = useState("Select Make");
+  const [type, setType] = useState("Select Type");
+  const [year, setYear] = useState("Select Year");
   const [result, setResult] = useState([]);
   const [typeResult, setTypeResult] = useState([]);
 
@@ -32,11 +33,33 @@ function SearchBar() {
   //fetch the new API
   function fetchApi() {
     console.log("Fetching API");
-    fetch(
-      `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${year}?format=json`
-    )
-      .then((response) => response.json())
-      .then((data) => setFinishingResults(data.Results));
+    if (type === "Select Type" && year === "Select Year") {
+      console.log("Fetching API");
+      fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMake/${make}?format=json`
+      )
+        .then((response) => response.json())
+        .then((data) => setFinishingResults(data.Results));
+    } else if (year === "Select Year") {
+      fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/vehicletype/${type}?format=json`
+      )
+        .then((response) => response.json())
+        .then((data) => setFinishingResults(data.Results));
+    } else if (type === "Select Type") {
+      fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${year}?format=json`
+      )
+        .then((response) => response.json())
+        .then((data) => setFinishingResults(data.Results));
+    } else {
+      console.log("Fetching API");
+      fetch(
+        `https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeYear/make/${make}/modelyear/${year}?format=json`
+      )
+        .then((response) => response.json())
+        .then((data) => setFinishingResults(data.Results));
+    }
   }
 
   //read out the items
@@ -85,25 +108,51 @@ function SearchBar() {
   setTheYear();
   const yearItems = array.map((item, i) => <option key={i}>{item}</option>);
 
+  const reset = () => {
+    setMake("Select Make");
+    setType("Select Type");
+    setYear("Select Year");
+    document.getElementById("makeID").value = "Select Make";
+    document.getElementById("typeID").value = "Select Type";
+    document.getElementById("yearID").value = "Select Year";
+
+    document.getElementById("results").innerHTML = " ";
+  };
+
   return (
     <div>
-      <select onChange={(e) => setMake(e.target.value)}>
+      <select id="makeID" onChange={(e) => setMake(e.target.value)}>
         <option>Select Make</option>
         {makeItems}
       </select>
-      <select onChange={(e) => setType(e.target.value)}>
+      <select id="typeID" onChange={(e) => setType(e.target.value)}>
         <option>Select Type</option>
         {typeItems}
       </select>
-      <select onChange={(e) => setYear(e.target.value)}>
+      <select id="yearID" onChange={(e) => setYear(e.target.value)}>
         <option>Select Year</option>
         {yearItems}
       </select>
       <div>
-        <button onClick={fetchApi}>Search</button>
+        <Button
+          className="button"
+          variant="primary"
+          size="lg"
+          onClick={fetchApi}
+        >
+          Search
+        </Button>
+        <Button
+          className="button"
+          variant="secondary"
+          size="lg"
+          onClick={reset}
+        >
+          Clear Selections
+        </Button>
       </div>
 
-      <ul>{allResults}</ul>
+      <ul id="results">{allResults}</ul>
     </div>
   );
 }
