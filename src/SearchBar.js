@@ -58,7 +58,7 @@ const SearchBar = () => {
     <>
       {result.length > 0 ? (
         <Card
-          title="Motor Vehicle Form"
+          title="Search For Your Desired Models"
           bordered={false}
           style={{ width: "50%", margin: "auto" }}
         >
@@ -133,15 +133,22 @@ const SearchBar = () => {
                   <b>Model ID:</b> {item.Model_ID} |&nbsp;
                 </Text>
                 <Text>
-                  <b>Model Name:</b> {item.Model_Name} |&nbsp;
+                  <b>Model Name:</b> {item.Model_Name}{" "}
+                  {item.VehicleTypeId ? <> | </> : ""}
                 </Text>
-                <Text>
-                  <b>Vehicle Type ID:</b> {item.VehicleTypeId} |&nbsp;
-                </Text>
-                <Text>
-                  {item.VehicleTypeName ? "Yes" : "no"}
-                  <b>Vehicle Type:</b> {item.VehicleTypeName}
-                </Text>
+
+                {item.VehicleTypeId ? (
+                  <>
+                    <Text>
+                      <b>Vehicle Type ID:</b> {item.VehicleTypeId} |&nbsp;
+                    </Text>
+                    <Text>
+                      <b>Vehicle Type:</b> {item.VehicleTypeName}
+                    </Text>
+                  </>
+                ) : (
+                  ""
+                )}
               </Space>
             </List.Item>
           )}
